@@ -1,0 +1,34 @@
+Akeneo\Pim\Enrichment\Component\Product\Model\ProductProductAssociation:
+    type: entity
+    table: pim_catalog_product_product_association
+    changeTrackingPolicy: DEFERRED_EXPLICIT
+    repositoryClass: Akeneo\Pim\Enrichment\Bundle\Doctrine\ORM\Repository\ProductProductAssociationRepository
+    fields:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        quantity:
+            type: integer
+            default: 1
+    # uniqueConstraints:
+    #     locale_foreign_key_idx:
+    #         columns:
+    #             - product_id
+    #             - association_id
+    manyToOne:
+        product:
+            targetEntity: Akeneo\Pim\Enrichment\Component\Product\Model\ProductInterface
+            joinColumns:
+                product_id:
+                    referencedColumnName: id
+                    nullable: false
+                    onDelete: CASCADE
+        association:
+            targetEntity: Akeneo\Pim\Enrichment\Component\Product\Model\ProductAssociation
+            joinColumns:
+                association_id:
+                    referencedColumnName: id
+                    nullable: false
+                    onDelete: CASCADE

@@ -45,28 +45,28 @@ Akeneo\Pim\Enrichment\Component\Product\Model\ProductAssociation:
                     group_id:
                         referencedColumnName: id
                         onDelete: CASCADE
-        products:
-            targetEntity: Akeneo\Pim\Enrichment\Component\Product\Model\ProductInterface
-            joinTable:
-                name: pim_catalog_association_product
-                joinColumns:
-                    association_id:
-                        onDelete: CASCADE
-                        referencedColumnName: id
-                inverseJoinColumns:
-                    product_id:
-                        referencedColumnName: id
-                        onDelete: CASCADE
+        # products:
+        #     targetEntity: Akeneo\Pim\Enrichment\Component\Product\Model\ProductInterface
+        #     joinTable:
+        #         name: pim_catalog_association_product
+        #         joinColumns:
+        #             association_id:
+        #                 onDelete: CASCADE
+        #                 referencedColumnName: id
+        #         inverseJoinColumns:
+        #             product_id:
+        #                 referencedColumnName: id
+        #                 onDelete: CASCADE
 
-        productModels:
-            targetEntity: Akeneo\Pim\Enrichment\Component\Product\Model\ProductModelInterface
-            joinTable:
-                name: pim_catalog_association_product_model
-                joinColumns:
-                    association_id:
-                        onDelete: CASCADE
-                        referencedColumnName: id
-                inverseJoinColumns:
-                    product_model_id:
-                        referencedColumnName: id
-                        onDelete: CASCADE
+        # productModels:
+        #     targetEntity: Akeneo\Pim\Enrichment\Component\Product\Model\ProductModelInterface
+        #     joinTable:
+        #         name: pim_catalog_association_product_model
+        #         joinColumns:
+        #             association_id:
+        #                 onDelete: CASCADE
+        #                 referencedColumnName: id
+        #         inverseJoinColumns:
+        #             product_model_id:
+        #                 referencedColumnName: id
+        #                 onDelete: CASCADE
