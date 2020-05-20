@@ -11,6 +11,7 @@ import {DataSourceCharts} from './DataSourceCharts';
 import {BusinessErrorCountWidget} from './ErrorManagement/BusinessErrorCountWidget';
 import {NoConnection} from './NoConnection';
 import {UserSurvey} from './UserSurvey';
+import {ErrorSourceCharts} from './ErrorSourceCharts';
 
 export const Charts = () => {
     const dispatch = useDashboardDispatch();
@@ -31,6 +32,7 @@ export const Charts = () => {
     }, [route, dispatch]);
 
     const state = useDashboardState();
+
     const sourceConnections = Object.values(state.connections).filter(
         connection => FlowType.DATA_SOURCE === connection.flowType
     );
@@ -46,6 +48,7 @@ export const Charts = () => {
         <>
             <DataSourceCharts />
             <DataDestinationCharts />
+            <ErrorSourceCharts />
         </>
     );
     if (0 === sourceConnections.length && 0 !== destinationConnections.length) {
@@ -53,6 +56,7 @@ export const Charts = () => {
             <>
                 <DataDestinationCharts />
                 <DataSourceCharts />
+                <ErrorSourceCharts />
             </>
         );
     }

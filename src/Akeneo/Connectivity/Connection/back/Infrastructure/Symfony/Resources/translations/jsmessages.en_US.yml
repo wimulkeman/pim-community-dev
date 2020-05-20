@@ -165,6 +165,8 @@ akeneo_connectivity.connection:
         charts:
             inbound: Inbound
             outbound: Outbound
+            errors_on_source_connections: Errors on source connections
+            error_count_per_day: Error count per day
             number_of_products_created: Products created
             number_of_products_updated: Products updated
             number_of_products_sent: Products sent
