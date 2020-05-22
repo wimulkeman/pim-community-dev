@@ -1,0 +1,18 @@
+@import '../base/variables';
+
+.AknPanel {
+  width: @AknSecondColumnWidth;
+  background-color: red;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  &:empty {
+    display: none;
+  }
+
+  &--collapsed {
+    width: 0px;
+  }
+}
