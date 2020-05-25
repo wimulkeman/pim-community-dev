@@ -12,6 +12,7 @@ define(
         'backbone',
         'pim/form',
         'oro/messenger',
+        'oro/mediator',
         'pim/fetcher-registry',
         'pim/init',
         'pim/init-translator',
@@ -23,12 +24,14 @@ define(
         'pim/template/app',
         'pim/template/common/flash',
         'jquery.select2.placeholder'
-    ], function (
+    ],
+    function (
         $,
         _,
         Backbone,
         BaseForm,
         messenger,
+        mediator,
         FetcherRegistry,
         init,
         initTranslator,
@@ -60,11 +63,14 @@ define(
              * {@inheritdoc}
              */
             configure: function () {
+                this.listenTo(mediator, 'pim-app:overlay:show', this.showOverlay);
+                this.listenTo(mediator, 'pim-app:overlay:hide', this.hideOverlay);
+
                 return $.when(
-                    FetcherRegistry.initialize(),
-                    DateContext.initialize(),
-                    UserContext.initialize()
-                )
+                        FetcherRegistry.initialize(),
+                        DateContext.initialize(),
+                        UserContext.initialize()
+                    )
                     .then(initTranslator.fetch)
                     .then(function () {
                         messenger.showQueuedMessages();
@@ -88,6 +94,16 @@ define(
                 }
 
                 return BaseForm.prototype.render.apply(this, arguments);
+            },
+
+            showOverlay: function () {
+                this.$('#page').addClass('AknDefault-page--withOverlay');
+                this.$('.AknDefault-mainContent').addClass('AknDefault-mainContent--withoutScroll');
+            },
+
+            hideOverlay: function () {
+                this.$('#page').removeClass('AknDefault-page--withOverlay');
+                this.$('.AknDefault-mainContent').removeClass('AknDefault-mainContent--withoutScroll');
             }
         });
     });
