@@ -48,6 +48,9 @@ define(
             className: 'app',
             template: _.template(template),
             flashTemplate: _.template(flashTemplate),
+            events: {
+                'click #panelOverlay': 'hideOverlay'
+            },
 
             /**
              * {@inheritdoc}
@@ -97,13 +100,11 @@ define(
             },
 
             showOverlay: function () {
-                this.$('#page').addClass('AknDefault-page--withOverlay');
-                this.$('.AknDefault-mainContent').addClass('AknDefault-mainContent--withoutScroll');
+                this.$('#panelOverlay').addClass('AknCommunicationPanel-overlay--show');
             },
 
             hideOverlay: function () {
-                this.$('#page').removeClass('AknDefault-page--withOverlay');
-                this.$('.AknDefault-mainContent').removeClass('AknDefault-mainContent--withoutScroll');
+                this.$('#panelOverlay').removeClass('AknCommunicationPanel-overlay--show');
             }
         });
     });

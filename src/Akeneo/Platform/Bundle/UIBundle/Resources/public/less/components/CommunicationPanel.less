@@ -6,7 +6,6 @@
   position: absolute;
   top: 0;
   right: 0;
-  z-index: 999;
   overflow-x: scroll;
   background: #F9F9FB;
   border-left: 1px solid #ccd1d8;
@@ -18,5 +17,23 @@
 
   &--collapsed {
     width: 0px;
+  }
+
+  &-overlay {
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    background: rgba(0,0,0,.2);
+    transition: opacity .2s ease-in;
+    opacity: 1;
+    z-index: 9999999999;
+    top: 0;
+    left: 0;
+    display: none;
+    overflow: hidden;
+
+    &--show {
+      display: block;
+    }
   }
 }
