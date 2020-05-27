@@ -6,6 +6,7 @@ use Akeneo\Channel\Component\Model\ChannelInterface;
 use Akeneo\Pim\Enrichment\Component\Product\Model\EntityWithValuesInterface;
 use Akeneo\Pim\Structure\Bundle\Doctrine\ORM\Repository\AttributeRepository;
 use Akeneo\Pim\Structure\Component\AttributeTypes;
+use Akeneo\Tool\Component\Api\Exception\ProductViolationHttpException;
 use Akeneo\Tool\Component\Api\Exception\ViolationHttpException;
 use Akeneo\Tool\Component\StorageUtils\Repository\IdentifiableObjectRepositoryInterface;
 use Doctrine\Common\Inflector\Inflector;
@@ -36,13 +37,18 @@ class ViolationNormalizer implements NormalizerInterface, CacheableSupportsMetho
      */
     public function normalize($exception, $format = null, array $context = [])
     {
-        $errors = $this->normalizeViolations($exception->getViolations());
+        $data = [];
 
-        $data = [
-            'code'    => $exception->getStatusCode(),
-            'message' => $exception->getMessage(),
-            'errors'  => $errors
-        ];
+        // TGG : First method : throw a new exception the current product in parameter.
+        if ($exception instanceof ProductViolationHttpException) {
+            $data['test_normalize_product_id'] = $exception->getProduct()->getId();
+            $data['test_normalize_product_code'] = $exception->getProduct()->getIdentifier();
+            $data['test_normalize_product_family_id'] = $exception->getProduct()->getFamilyId();
+        }
+
+        $data['code'] = $exception->getStatusCode();
+        $data['message'] = $exception->getMessage();
+        $data['errors'] = $this->normalizeViolations($exception->getViolations());
 
         return $data;
     }
@@ -52,7 +58,7 @@ class ViolationNormalizer implements NormalizerInterface, CacheableSupportsMetho
      */
     public function supportsNormalization($exception, $format = null)
     {
-        return $exception instanceof ViolationHttpException;
+        return $exception instanceof ProductViolationHttpException || $exception instanceof ViolationHttpException;
     }
 
     public function hasCacheableSupportsMethod(): bool
@@ -117,7 +123,16 @@ class ViolationNormalizer implements NormalizerInterface, CacheableSupportsMetho
                 $error['property'] = 'category_tree';
             }
 
-            $key = $propertyPath.$violationMessage;
+            $key = $propertyPath . $violationMessage;
+
+            // TGG : Second method : read parameter from violation.
+            if (array_key_exists('test_parameter_inside_validate', $violation->getParameters())) {
+                $error['test_parameter_inside_validate'] = $violation->getParameters()['test_parameter_inside_validate'];
+            }
+
+            // TGG : Third method : add key directly in normalizeViolations.
+            $error['test_add_key_normalize_violations'] = "test_add_key_normalize_violations";
+
             if (!array_key_exists($key, $existingViolation)) {
                 $errors[] = $error;
             }
@@ -172,7 +187,7 @@ class ViolationNormalizer implements NormalizerInterface, CacheableSupportsMetho
      * TODO: TIP-722 To remove once the "identifier" product value is removed from the product value collection.
      *
      * @param ConstraintViolationInterface $violation
-     * @param string                       $productValueKey
+     * @param string $productValueKey
      *
      * @return array
      */
@@ -191,11 +206,11 @@ class ViolationNormalizer implements NormalizerInterface, CacheableSupportsMetho
         }
 
         $error = [
-            'property'  => 'values',
-            'message'   => $violation->getMessage(),
+            'property' => 'values',
+            'message' => $violation->getMessage(),
             'attribute' => $productValue->getAttributeCode(),
-            'locale'    => $productValue->getLocaleCode(),
-            'scope'     => $productValue->getScopeCode()
+            'locale' => $productValue->getLocaleCode(),
+            'scope' => $productValue->getScopeCode()
         ];
 
         if (AttributeTypes::PRICE_COLLECTION === $attributeType &&

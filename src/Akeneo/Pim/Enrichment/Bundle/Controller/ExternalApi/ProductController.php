@@ -26,6 +26,7 @@ use Akeneo\Tool\Bundle\ApiBundle\Documentation;
 use Akeneo\Tool\Bundle\ApiBundle\Stream\StreamResourceResponse;
 use Akeneo\Tool\Component\Api\Exception\DocumentedHttpException;
 use Akeneo\Tool\Component\Api\Exception\InvalidQueryException;
+use Akeneo\Tool\Component\Api\Exception\ProductViolationHttpException;
 use Akeneo\Tool\Component\Api\Exception\ViolationHttpException;
 use Akeneo\Tool\Component\Api\Pagination\PaginationTypes;
 use Akeneo\Tool\Component\Api\Pagination\PaginatorInterface;
@@ -549,7 +550,12 @@ class ProductController
     {
         $violations = $this->productValidator->validate($product, null, ['Default', 'api']);
         if (0 !== $violations->count()) {
-            throw new ViolationHttpException($violations);
+
+            // TGG : First method : throw a new exception the current product in parameter.
+            throw new ProductViolationHttpException($product, $violations);
+
+            // TODO : modify ViolationHttpException or create ProductViolationHttpException ?
+            //throw new ViolationHttpException($violations);
         }
     }
 

@@ -8,6 +8,7 @@ use Akeneo\Connectivity\Connection\Application\ErrorManagement\Service\ExtractEr
 use Akeneo\Connectivity\Connection\Domain\ErrorManagement\Model\Write\ApiErrorInterface;
 use Akeneo\Connectivity\Connection\Domain\ErrorManagement\Model\Write\BusinessError;
 use Akeneo\Connectivity\Connection\Domain\ErrorManagement\Model\Write\TechnicalError;
+use Akeneo\Tool\Component\Api\Exception\ProductViolationHttpException;
 use Akeneo\Tool\Component\Api\Exception\ViolationHttpException;
 use FOS\RestBundle\Context\Context;
 use FOS\RestBundle\Serializer\Serializer;
@@ -41,7 +42,7 @@ class ExtractErrorsFromHttpException implements ExtractErrorsFromHttpExceptionIn
 
         $json = $this->serializer->serialize($httpException, 'json', new Context());
 
-        if ($httpException instanceof ViolationHttpException) {
+        if ($httpException instanceof ViolationHttpException or $httpException instanceof ProductViolationHttpException) {
             return $this->extractViolationErrors($json);
         }
 

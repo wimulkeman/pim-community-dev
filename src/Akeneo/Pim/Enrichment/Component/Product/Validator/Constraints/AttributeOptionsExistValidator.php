@@ -61,7 +61,10 @@ class AttributeOptionsExistValidator extends ConstraintValidator
                             '%attribute_code%' => $value->getAttributeCode(),
                             '%invalid_option%' => $value->getData(),
                         ]
-                    )->atPath(sprintf('[%s]', $key))->addViolation();
+                    )->atPath(sprintf('[%s]', $key))
+                        // TGG : Second method : add parameter into violation.
+                        ->setParameter('test_parameter_inside_validate', $value->getData())
+                        ->addViolation();
                 }
             } elseif ($value instanceof OptionsValueInterface) {
                 $notExistingOptionCodes = array_diff(array_map('strtolower', $value->getData()), ($existingOptionCodes[$value->getAttributeCode()] ?? []));
