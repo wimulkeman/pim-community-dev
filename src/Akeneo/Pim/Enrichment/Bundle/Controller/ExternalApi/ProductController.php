@@ -528,6 +528,9 @@ class ProductController
                 $data['values'] = [];
             }
         } catch (PropertyException $exception) {
+
+            // TGG product 17496953  color_hexa_code max char 7
+
             throw new DocumentedHttpException(
                 Documentation::URL . 'patch_products__code_',
                 sprintf('%s Check the expected format on the API documentation.', $exception->getMessage()),
@@ -551,7 +554,7 @@ class ProductController
         $violations = $this->productValidator->validate($product, null, ['Default', 'api']);
         if (0 !== $violations->count()) {
 
-            // TGG : First method : throw a new exception the current product in parameter.
+            // TGG : First method : throw a new exception with the current product in parameter.
             throw new ProductViolationHttpException($product, $violations);
 
             // TODO : modify ViolationHttpException or create ProductViolationHttpException ?

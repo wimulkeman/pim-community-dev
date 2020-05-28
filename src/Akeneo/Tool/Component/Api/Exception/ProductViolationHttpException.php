@@ -30,7 +30,7 @@ class ProductViolationHttpException extends UnprocessableEntityHttpException
      */
     public function __construct(
         ProductInterface $product,
-        ConstraintViolationListInterface $violations,
+        ?ConstraintViolationListInterface $violations = null,
         $message = 'Validation failed.',
         \Exception $previous = null,
         $code = 0

@@ -39,7 +39,7 @@ class ViolationNormalizer implements NormalizerInterface, CacheableSupportsMetho
     {
         $data = [];
 
-        // TGG : First method : throw a new exception the current product in parameter.
+        // TGG : First method : throw a new exception with the current product in parameter.
         if ($exception instanceof ProductViolationHttpException) {
             $data['test_normalize_product_id'] = $exception->getProduct()->getId();
             $data['test_normalize_product_code'] = $exception->getProduct()->getIdentifier();

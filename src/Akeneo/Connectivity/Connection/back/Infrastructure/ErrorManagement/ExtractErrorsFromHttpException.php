@@ -42,6 +42,10 @@ class ExtractErrorsFromHttpException implements ExtractErrorsFromHttpExceptionIn
 
         $json = $this->serializer->serialize($httpException, 'json', new Context());
 
+        // Switch here
+        //...
+        // Quid DocumentedException ? (unknown family for example) inject Product ?
+
         if ($httpException instanceof ViolationHttpException or $httpException instanceof ProductViolationHttpException) {
             return $this->extractViolationErrors($json);
         }
