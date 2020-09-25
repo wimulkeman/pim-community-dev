@@ -5,7 +5,8 @@ import resolve from 'rollup-plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
 import react from 'react';
 import reactDom from 'react-dom';
-
+import includePaths from 'rollup-plugin-includepaths';
+import alias from 'rollup-plugin-alias';
 import pkg from './package.json';
 
 const extensions = ['.ts', '.tsx'];
@@ -29,6 +30,14 @@ const plugins = [
         }
     }),
     replace({'process.env.NODE_ENV': JSON.stringify(env)}),
+    includePaths({ paths: ['./src/theme', './src/shared','./src/icons', './src/hooks'], extensions: ['.ts', '.tsx'] }),
+    alias({
+        resolve: ['.ts', '.tsx'],
+        theme: __dirname + 'src/theme',
+        shared: __dirname + 'src/shared',
+        icons: __dirname + 'src/icons',
+        hooks: __dirname + 'src/hooks'
+    }),
 ];
 
 const external = ['styled-components'];
