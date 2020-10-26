@@ -42,6 +42,13 @@ akeneo_data_quality_insights:
             see_in_grid: See in grid
         time_axis:
             day: day
+        key_indicators:
+            title: Key Indicators
+            list:
+                has_image :
+                    title: Products with an image
+                good_enrichment:
+                    title: Products with a good enrichment ratio
 
     product_evaluation:
         criteria:
