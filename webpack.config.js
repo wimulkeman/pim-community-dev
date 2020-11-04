@@ -7,7 +7,6 @@ const path = require('path');
 const _ = require('lodash');
 
 
-const WebpackShellPlugin = require('webpack-shell-plugin');
 const ExtraWatchWebpackPlugin = require('extra-watch-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const isProd = process.argv && process.argv.indexOf('--env=prod') > -1;
@@ -231,11 +230,6 @@ const webpackConfig = {
   },
 
   plugins: [
-    new WebpackShellPlugin({
-      onBuildStart: ['yarn run less', 'yarn update-extensions'],
-      dev: false
-    }),
-
     new ExtraWatchWebpackPlugin({
       files: ['src/**/*{form_extensions/**/*.yml,form_extensions.yml}'],
     }),
