@@ -7,6 +7,8 @@ use Akeneo\Tool\Component\Batch\Job\JobRepositoryInterface;
 use Akeneo\Tool\Component\Batch\Model\StepExecution;
 use Akeneo\Tool\Component\Batch\Step\AbstractStep;
 use Akeneo\Tool\Component\Batch\Step\TrackableStepInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -14,10 +16,11 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @copyright 2015 Akeneo SAS (http://www.akeneo.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-class TaskletStep extends AbstractStep implements TrackableStepInterface
+class TaskletStep extends AbstractStep implements TrackableStepInterface, LoggerAwareInterface
 {
-    /** @var TaskletInterface */
-    protected $tasklet;
+    use LoggerAwareTrait;
+
+    protected TaskletInterface $tasklet;
 
     /**
      * @param string                   $name
@@ -41,9 +44,7 @@ class TaskletStep extends AbstractStep implements TrackableStepInterface
     protected function doExecute(StepExecution $stepExecution)
     {
         $this->tasklet->setStepExecution($stepExecution);
-        if ($this->isTrackable()) {
-            $stepExecution->setTotalItems($this->tasklet->totalItems());
-        }
+        $this->initializeProgress($stepExecution);
         $this->tasklet->execute();
     }
 
@@ -66,5 +67,17 @@ class TaskletStep extends AbstractStep implements TrackableStepInterface
     public function isTrackable(): bool
     {
         return $this->tasklet instanceof TrackableTaskletInterface;
+    }
+
+    protected function initializeProgress(StepExecution $stepExecution): void
+    {
+        try {
+            if ($this->isTrackable()) {
+                $stepExecution->setTotalItems($this->tasklet->totalItems());
+            }
+        } catch (\Exception $e) {
+            $stepExecution->setTotalItems(0);
+            $this->critical($e->getMessage());
+        }
     }
 }
