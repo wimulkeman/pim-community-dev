@@ -39,7 +39,6 @@ const Content = styled.div`
   border-left: 1px solid;
   flex: 1;
   line-height: 1.5;
-  background-color: ${getColor('white')};
 
   a {
     color: ${getColor('grey', 140)};
