@@ -5,8 +5,8 @@ import {Tooltip} from './Tooltip';
 import {useTheme} from 'akeneo-design-system';
 import {ScoreDistributionChartDataset} from '../../../../../domain';
 
-const INITIAL_CHART_WIDTH = 1000;
-const INITIAL_CHART_HEIGHT = 268;
+const INITIAL_CHART_WIDTH = 600;
+const INITIAL_CHART_HEIGHT = 280;
 
 type Props = {
   dataset: ScoreDistributionChartDataset;
@@ -48,7 +48,7 @@ const ScoreDistributionChart: FC<Props> = ({dataset, dateFormatCallback, periodD
       <VictoryChart
         height={INITIAL_CHART_HEIGHT}
         width={INITIAL_CHART_WIDTH}
-        padding={{top: 0, bottom: 65, left: 35, right: 0}}
+        padding={{top: 0, bottom: 30, left: 35, right: 0}}
         domain={{x: periodDomain, y: [0, 100]}}
         domainPadding={{x: 0, y: 12.5}}
       >

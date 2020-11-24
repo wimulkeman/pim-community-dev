@@ -1,9 +1,9 @@
 import {isEmpty} from 'lodash';
 import React, {FC, useMemo} from 'react';
-import {EmptyChartPlaceholder} from './EmptyChartPlaceholder';
 import {ScoreDistributionChart} from './ScoreDistributionChart';
 import {dailyCallback, monthlyCallback, weeklyCallback} from '../../../../helper/Dashboard';
 import {ScoreDistributionChartDataset, TimePeriod} from '../../../../../domain';
+import {EmptyChartPlaceholder} from '../../EmptyChartPlaceholder';
 
 const isEmptyChartDataset = (dataset: ScoreDistributionChartDataset): boolean => {
   if (isEmpty(dataset) || isEmpty(dataset['rank_6'])) {
