@@ -6,7 +6,6 @@ const webpack = require('webpack');
 const path = require('path');
 const _ = require('lodash');
 
-
 const ExtraWatchWebpackPlugin = require('extra-watch-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const isProd = process.argv && process.argv.indexOf('--env=prod') > -1;
