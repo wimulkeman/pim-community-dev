@@ -15,6 +15,16 @@ services:
         tags:
             - { name: console.command }
 
+    Akeneo\Pim\Enrichment\Bundle\Command\FastCleanRemovedAttributesFromProductAndProductModelCommand:
+        arguments:
+            - '@pim_connector.doctrine.cache_clearer'
+            - '@pim_catalog.query.product_and_product_model_query_builder_factory'
+            - '%kernel.root_dir%'
+            - '%pim_job_product_batch_size%'
+            - '@pim_catalog.product_values.fast_clean_values_of_removed_attributes'
+        tags:
+            - { name: console.command }
+
     Akeneo\Pim\Enrichment\Bundle\Command\QueryHelpProductCommand:
         arguments:
             - '@pim_catalog.query.filter.product.field_dumper'
