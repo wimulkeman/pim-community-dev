@@ -44,3 +44,4 @@ services:
             - '@akeneo.pim.structure.query.sql_get_attributes'
             - '@pim_connector.doctrine.cache_clearer'
             - '@database_connection'
+            - '@akeneo_elasticsearch.client.product_and_product_model'

@@ -14,6 +14,7 @@ use Akeneo\Pim\Structure\Component\Query\PublicApi\AttributeType\GetAttributes;
 use Akeneo\Tool\Bundle\ConnectorBundle\Doctrine\UnitOfWorkAndRepositoriesClearer;
 use Akeneo\Tool\Component\StorageUtils\Saver\BulkSaverInterface;
 use Doctrine\DBAL\Connection;
+use Akeneo\Tool\Bundle\ElasticsearchBundle\Client;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -59,6 +60,8 @@ class FastCleanValuesOfRemovedAttributes implements CleanValuesOfRemovedAttribut
 
     private Connection $connection;
 
+    private Client $productAndProductModelClient;
+
     public function __construct(
         CountProductsWithRemovedAttributeInterface $countProductsWithRemovedAttribute,
         CountProductModelsWithRemovedAttributeInterface $countProductModelsWithRemovedAttribute,
@@ -72,7 +75,8 @@ class FastCleanValuesOfRemovedAttributes implements CleanValuesOfRemovedAttribut
         ValidatorInterface $validator,
         GetAttributes $getAttributes,
         UnitOfWorkAndRepositoriesClearer $clearer,
-        Connection $connection
+        Connection $connection,
+        Client $productAndProductModelClient
     ) {
         $this->countProductsWithRemovedAttribute = $countProductsWithRemovedAttribute;
         $this->countProductModelsWithRemovedAttribute = $countProductModelsWithRemovedAttribute;
@@ -87,6 +91,7 @@ class FastCleanValuesOfRemovedAttributes implements CleanValuesOfRemovedAttribut
         $this->getAttributes = $getAttributes;
         $this->clearer = $clearer;
         $this->connection = $connection;
+        $this->productAndProductModelClient = $productAndProductModelClient;
     }
 
     public function countProductsWithRemovedAttribute(array $attributesCodes): int
@@ -97,13 +102,33 @@ class FastCleanValuesOfRemovedAttributes implements CleanValuesOfRemovedAttribut
     public function cleanProductsWithRemovedAttribute(array $attributesCodes, ?callable $progress = null): void
     {
         foreach ($attributesCodes as $attributeCode) {
-          $blacklistAttributeCode = <<<SQL
-          INSERT INTO `pim_catalog_attribute_blacklist` (`attribute_code`)
-          VALUES
-              ('new_blacklisted_attribute');
-          SQL;
+            $removeValues = <<<SQL
+            UPDATE `pim_catalog_product`
+            SET `pim_catalog_product`.raw_values = JSON_REMOVE(`pim_catalog_product`.raw_values, '$.:attribute_code');
+    SQL;
 
-          $this->connection->executeUpdate($blacklistAttributeCode);
+            $this->connection->executeUpdate($removeValues, [':attribute_code' => $attributeCode]);
+
+            // 'query' => [
+            //     'terms' => ['categories' => $this->categoryCodesToRemove],
+            // ],
+            // 'script' => [
+            //     // WARNING: "inline" will need to be changed to "source" when we'll switch to Elasticsearch 5.6
+            //     'inline' => 'ctx._source.categories.removeAll(params.categories); if (0 == ctx._source.categories.size()) { ctx._source.remove("categories"); }',
+            //     'lang'   => 'painless',
+            //     'params' => ['categories' => $this->categoryCodesToRemove],
+            // ],
+
+            $this->productAndProductModelClient->updateByQuery([
+                'query' => [
+                    'exists' => ['field' => sprintf('_source.values.%s', $attributeCode)],
+                ],
+                'script' => [
+                    'inline' => 'ctx._source.values.remove(params.attributeCode)',
+                    'lang'   => 'painless',
+                    'params' => ['attributeCode' => $attributeCode],
+                ]
+            ]);
         }
         // foreach ($this->getProductIdentifiersWithRemovedAttribute->nextBatch($attributesCodes, self::BATCH_SIZE) as $identifiers) {
         //     $products = $this->productRepository->findBy(['identifier' => $identifiers]);
@@ -124,15 +149,15 @@ class FastCleanValuesOfRemovedAttributes implements CleanValuesOfRemovedAttribut
 
     public function cleanProductModelsWithRemovedAttribute(array $attributesCodes, ?callable $progress = null): void
     {
-        foreach ($this->getProductModelIdentifiersWithRemovedAttribute->nextBatch($attributesCodes, self::BATCH_SIZE) as $identifiers) {
-            $productModels = $this->productModelRepository->findBy(['code' => $identifiers]);
-            $this->productModelSaver->saveAll($productModels, ['force_save' => true]);
+        foreach ($attributesCodes as $attributeCode) {
+    //         $removeValues = <<<SQL
+    //         UPDATE `pim_catalog_product_model`
+    //         SET `pim_catalog_product_model`.raw_values = JSON_REMOVE(`pim_catalog_product_model`.raw_values, '$.:attribute_code');
+    // SQL;
 
-            if (null !== $progress) {
-                $progress(count($productModels));
-            }
+    //         $this->connection->executeUpdate($removeValues, [':attribute_code' => $attributeCode]);
 
-            $this->clearer->clear();
+
         }
     }
 

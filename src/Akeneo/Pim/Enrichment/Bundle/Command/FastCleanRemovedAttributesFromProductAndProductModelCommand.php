@@ -25,7 +25,7 @@ use Symfony\Component\Process\Process;
  * @copyright 2018 Akeneo SAS (http://www.akeneo.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-class CleanRemovedAttributesFromProductAndProductModelCommand extends Command
+class FastCleanRemovedAttributesFromProductAndProductModelCommand extends Command
 {
     protected static $defaultName = 'pim:product:fast-clean-removed-attributes';
 
