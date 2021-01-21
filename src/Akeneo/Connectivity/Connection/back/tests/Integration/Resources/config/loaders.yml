@@ -1,4 +1,7 @@
 services:
+    _defaults:
+        public: true
+
     akeneo_connectivity.connection.fixtures.connection_loader:
         class: 'Akeneo\Connectivity\Connection\back\tests\Integration\Fixtures\ConnectionLoader'
         arguments:

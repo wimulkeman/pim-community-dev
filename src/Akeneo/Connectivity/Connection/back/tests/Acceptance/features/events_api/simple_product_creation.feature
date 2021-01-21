@@ -1,7 +1,10 @@
 @acceptance-back
 Feature: An event is raised when simple product is created
 
-  Scenario:
+  Background:
+    Given a catalog with the attribute "sku" as product identifier
+
+  Scenario: An event is raised
     Given Julia has all the required permissions to create a product
     When Julia creates a simple product in the product grid
     Then an event is raised and added to the Events API message queue

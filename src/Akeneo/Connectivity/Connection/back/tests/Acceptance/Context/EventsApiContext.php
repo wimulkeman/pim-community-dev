@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\Connectivity\Connection\Tests\Acceptance\Context;
 
 use Behat\Behat\Context\Context;
+use Behat\Behat\Tester\Exception\PendingException;
 
 /**
  * @author Pierre Jolly <pierre.jolly@akeneo.com>
